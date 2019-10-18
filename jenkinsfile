@@ -7,6 +7,7 @@ node('master')
       stage('continuousBuild')
      {
       sh label: '', script: 'mvn package'
+      archiveArtifacts '**/*.war'
      }
       stage('continuousDeployment')
      {
@@ -20,6 +21,7 @@ node('master')
      }
       stage('contintinuousDelivery')
      {
+       input message: 'Waiting for approval from Delivery manager!', submitter: 'hari'
        sh label: '', script: 'scp  /var/lib/jenkins/workspace/spipeline/webapp/target/webapp.war ubuntu@172.31.23.1:/var/lib/tomcat8/webapps/anapp.war' 
      }
 
