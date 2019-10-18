@@ -1,0 +1,27 @@
+node('master')
+{
+      stage('continuousDownload') 
+     {
+      git 'https://github.com/nithinkayyala/project.git' 
+     }
+      stage('continuousBuild')
+     {
+      sh label: '', script: 'mvn package'
+     }
+      stage('continuousDeployment')
+     {
+      sh label: '', script: 'scp  /var/lib/jenkins/workspace/spipeline/webapp/target/webapp.war ubuntu@172.31.20.204:/var/lib/tomcat8/webapps/enapp.war'
+     }
+      stage('continuousTesting')
+     {
+      git 'https://github.com/selenium-saikrishna/FunctionalTesting.git'
+      sh label: '', script: 'java -jar /var/lib/jenkins/workspace/spipeline/testing.jar'
+       
+     }
+      stage('contintinuousDelivery')
+     {
+       sh label: '', script: 'scp  /var/lib/jenkins/workspace/spipeline/webapp/target/webapp.war ubuntu@172.31.23.1:/var/lib/tomcat8/webapps/anapp.war' 
+     }
+
+    
+}   
