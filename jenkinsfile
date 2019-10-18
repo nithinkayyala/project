@@ -21,6 +21,7 @@ node('master')
      }
       stage('contintinuousDelivery')
      {
+       input message: 'Waiting for approval from delivery manager!', submitter: 'krishna'input message: 'Waiting for approval from delivery manager!', submitter: 'krishna'
        sh label: '', script: 'scp  /var/lib/jenkins/workspace/spipeline/webapp/target/webapp.war ubuntu@172.31.23.1:/var/lib/tomcat8/webapps/anapp.war' 
      }
 
