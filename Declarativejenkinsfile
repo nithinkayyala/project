@@ -1,0 +1,53 @@
+pipeline
+{
+    
+    agent any
+    stages
+    {
+        stage('ContinuousDownload')
+        {
+         steps
+         {
+             git 'https://github.com/nithinkayyala/project.git'
+         }
+        }
+        stage('continuousBuild')
+        {
+          steps
+          {
+              sh label: '', script: 'mvn package'
+              archiveArtifacts '**/*.war'
+          }
+        }
+        stage('continuousDeployment')
+        {
+            steps
+            {
+                sh label: '', script: 'scp  /var/lib/jenkins/workspace/Declarativepipeline/webapp/target/webapp.war ubuntu@172.31.20.204:/var/lib/tomcat8/webapps/nithinapp.war'
+            }
+        }
+        stage('continuousTesting')
+        {
+            steps
+            {
+                git 'https://github.com/selenium-saikrishna/FunctionalTesting.git'
+                sh label: '', script: 'java -jar /var/lib/jenkins/workspace/Declarativepipeline/testing.jar'
+            }
+        }
+    }
+    post
+    {
+          success
+         {
+           sh label: '', script: 'scp  /var/lib/jenkins/workspace/Declarativepipeline/webapp/target/webapp.war ubuntu@172.31.23.1:/var/lib/tomcat8/webapps/ganeshapp.war' 
+         
+            
+         }
+         failure
+         {
+             mail bcc: '', body: 'jenkins has failed to perform  CI-CD', cc: '', from: '', replyTo: '', subject: 'jenkins job failed ', to: 'nithinkbs28@gmail.com'
+         }
+    }
+    
+    
+}
